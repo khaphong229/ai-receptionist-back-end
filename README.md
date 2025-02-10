@@ -1,3 +1,27 @@
+# AI RECEPTIONIST
+
+### HOW TO START PROJECT
+
+- Create virtual environment
+
 ```
-pip install flask flask-restful flask-cors flask_sqlalchemy openai opencv-python easyocr numpy
+python -m venv venv
+```
+
+- Active virtual environment
+
+```
+venv\Scripts\activate
+```
+
+- Install library for project
+
+```
+pip install -r requirements.txt
+```
+
+- Run project now!
+
+```
+python main.py
 ```
