@@ -1,7 +1,7 @@
-import easyocr
+# import easyocr
 
-reader = easyocr.Reader(["en"])
+# reader = easyocr.Reader(["en"])
 
-def extract_text(image):
-    result = reader.readtext(image.read(), detail=0)
-    return " ".join(result)
+# def extract_text(image):
+#     result = reader.readtext(image.read(), detail=0)
+#     return " ".join(result)
