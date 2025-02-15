@@ -10,3 +10,12 @@ class Config:
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
     FACE_FOLDER = os.getenv(UPLOAD_FOLDER, "faces")
     ID_FOLDER = os.getenv(UPLOAD_FOLDER, "ids")
+
+    # Cấu hình cho Chatbot
+    OPENAI_API_KEY = "your-api-key-here"
+    PINECONE_API_KEY = "your-pinecone-key"
+    PINECONE_ENVIRONMENT = "your-environment"
+    PINECONE_INDEX = "restaurant-knowledge"
+    
+    # Thư mục chứa dữ liệu training
+    KNOWLEDGE_DIR = "app/data/knowledge"

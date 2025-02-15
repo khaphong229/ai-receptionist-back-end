@@ -4,7 +4,7 @@ import os
 from bson import ObjectId
 from ..services.face_service import FaceService
 from ..database import mongo
-from ..models.customer import Customer  # Add this import
+from ..models.customer import Customer
 from ..config import Config
 
 face_bp = Blueprint("face_recognition", __name__)
@@ -12,6 +12,20 @@ face_service = FaceService()
 
 @face_bp.route("/recognize", methods=["POST"])
 def recognize_face():
+    """
+    API endpoint để nhận diện khuôn mặt.
+    
+    Flow:
+    1. Nhận ảnh từ request
+    2. Trích xuất face embedding
+    3. Tìm khách hàng khớp trong database
+    4. Nếu tìm thấy: trả về thông tin khách hàng
+    5. Nếu không tìm thấy: tạo khách hàng mới
+    
+    Returns:
+        JSON response với thông tin khách hàng hoặc thông báo lỗi
+    """
+    # Kiểm tra có file ảnh trong request không
     if 'image' not in request.files:
         return jsonify({
             'status': 'error',
@@ -19,43 +33,47 @@ def recognize_face():
         }), 400
 
     try:
+        # Đọc và xử lý ảnh
         image_file = request.files['image']
         image_data = image_file.read()
-        face_embedding = face_service.extract_face_embedding(image)
         
+        # Trích xuất face embedding
+        face_embedding = face_service.extract_face_embedding(image_data)
         if face_embedding is None:
             return jsonify({
                 'status': 'error',
                 'message': 'No face detected in image'
             }), 400
 
-        # Find matching customer
+        # Tìm khách hàng khớp
         matching_customer = face_service.find_matching_customer(face_embedding)
 
         if matching_customer:
-            # Save face image
-            image_file.seek(0)  # Reset file pointer
+            # Xử lý khách hàng đã tồn tại
+            image_file.seek(0)  # Reset con trỏ file để đọc lại
             face_image_path = face_service.save_face_image(image_file)
             
-            # Update face_images array
+            # Cập nhật mảng ảnh khuôn mặt
             mongo.db.customers.update_one(
                 {"_id": matching_customer['_id']},
                 {"$push": {"face_images": face_image_path}}
             )
-            # Get appointments
+
+            # Lấy thông tin lịch hẹn
             appointments = list(mongo.db.appointments.find(
                 {"customer_id": matching_customer['_id'],
                  "status": "confirmed"},
                 {"_id": 0}
             ))
 
-            # Save face log
+            # Lưu log nhận diện
             face_service.save_face_log(
                 matching_customer['_id'],
-                "face_recognition_log.jpg",
+                face_image_path,
                 "matched"
             )
 
+            # Trả về thông tin khách hàng
             return jsonify({
                 'status': 'success',
                 'message': 'Customer found',
@@ -70,22 +88,23 @@ def recognize_face():
                 'appointments': appointments
             })
         else:
-            # Save face image for new customer
+            # Xử lý khách hàng mới
             image_file.seek(0)
             face_image_path = face_service.save_face_image(image_file)
 
-            # Create new customer
+            # Tạo khách hàng mới
             new_customer = Customer(face_embedding=face_embedding)
             new_customer.face_images = [face_image_path]
             result = mongo.db.customers.insert_one(new_customer.to_dict())
             
-            # Save face log
+            # Lưu log nhận diện
             face_service.save_face_log(
                 result.inserted_id,
-                "face_recognition_log.jpg",
+                face_image_path,
                 "new"
             )
 
+            # Trả về thông tin khách hàng mới
             return jsonify({
                 'status': 'success',
                 'message': 'New customer created',
@@ -97,36 +116,4 @@ def recognize_face():
         return jsonify({
             'status': 'error',
             'message': f'Error processing image: {str(e)}'
-        }), 500
-
-
-@face_bp.route("/customer/<customer_id>", methods=["PUT"])
-def update_customer(customer_id):
-    try:
-        customer_data = request.json
-        
-        # Remove fields that shouldn't be updated directly
-        customer_data.pop('face_embedding', None)
-        customer_data.pop('created_at', None)
-        
-        result = mongo.db.customers.update_one(
-            {"_id": ObjectId(customer_id)},
-            {"$set": customer_data}
-        )
-        
-        if result.modified_count > 0:
-            return jsonify({
-                'status': 'success',
-                'message': 'Customer information updated successfully'
-            })
-        else:
-            return jsonify({
-                'status': 'error',
-                'message': 'Customer not found'
-            }), 404
-
-    except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': f'Error updating customer: {str(e)}'
         }), 500

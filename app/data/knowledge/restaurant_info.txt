@@ -1,0 +1,21 @@
+THÔNG TIN NHÀ HÀNG
+
+Giờ mở cửa: 
+- Thứ 2 - Thứ 6: 10:00 - 22:00
+- Thứ 7, Chủ nhật: 09:00 - 23:00
+
+Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM
+
+Đặt bàn:
+- Hotline: 0123.456.789
+- Email: booking@nhahang.com
+
+Chính sách đặt bàn:
+- Đặt trước ít nhất 2 tiếng
+- Đặt cọc 30% cho nhóm trên 10 người
+- Hủy đặt bàn trước 4 tiếng
+
+Khuyến mãi:
+- Giảm 10% tổng hóa đơn vào thứ 3 hàng tuần
+- Tặng món tráng miệng cho nhóm trên 4 người
+- Ưu đãi sinh nhật: Giảm 20% tổng hóa đơn 

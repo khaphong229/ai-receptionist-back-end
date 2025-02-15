@@ -1,0 +1,21 @@
+MENU NHÀ HÀNG
+
+1. MÓN KHAI VỊ
+- Gỏi cuốn tôm thịt: 55.000đ
+- Chả giò hải sản: 65.000đ
+- Salad trộn: 45.000đ
+
+2. MÓN CHÍNH
+- Cơm chiên hải sản: 89.000đ
+- Phở bò đặc biệt: 75.000đ
+- Bún chả Hà Nội: 85.000đ
+
+3. TRÁNG MIỆNG
+- Chè thái: 35.000đ
+- Flan caramel: 25.000đ
+- Trái cây theo mùa: 45.000đ
+
+4. ĐỒ UỐNG
+- Nước ép trái cây: 35.000đ
+- Sinh tố: 45.000đ
+- Cà phê: 29.000đ 
