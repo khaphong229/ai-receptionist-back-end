@@ -1,21 +1,21 @@
-THÔNG TIN NHÀ HÀNG
+RESTAURANT INFORMATION
 
-Giờ mở cửa: 
-- Thứ 2 - Thứ 6: 10:00 - 22:00
-- Thứ 7, Chủ nhật: 09:00 - 23:00
+Opening Hours: 
+- Monday - Friday: 10:00 AM - 10:00 PM
+- Saturday & Sunday: 09:00 AM - 11:00 PM
 
-Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM
+Address: 123 ABC Street, XYZ District, Ho Chi Minh City
 
-Đặt bàn:
+Reservations:
 - Hotline: 0123.456.789
-- Email: booking@nhahang.com
+- Email: booking@restaurant.com
 
-Chính sách đặt bàn:
-- Đặt trước ít nhất 2 tiếng
-- Đặt cọc 30% cho nhóm trên 10 người
-- Hủy đặt bàn trước 4 tiếng
+Booking Policy:
+- Book at least 2 hours in advance
+- 30% deposit required for groups over 10 people
+- Cancellation must be made 4 hours before booking time
 
-Khuyến mãi:
-- Giảm 10% tổng hóa đơn vào thứ 3 hàng tuần
-- Tặng món tráng miệng cho nhóm trên 4 người
-- Ưu đãi sinh nhật: Giảm 20% tổng hóa đơn 
+Promotions:
+- 10% off total bill every Tuesday
+- Free dessert for groups of 4 or more
+- Birthday special: 20% off total bill 

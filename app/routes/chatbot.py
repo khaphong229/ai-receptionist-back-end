@@ -6,7 +6,7 @@ chatbot_service = ChatbotService()
 
 @chatbot_bp.route('/chat', methods=['POST'])
 def chat():
-    """API endpoint để xử lý tin nhắn chat"""
+    """API endpoint to process chat messages"""
     try:
         data = request.get_json()
         user_message = data.get('message')
@@ -14,7 +14,7 @@ def chat():
         if not user_message:
             return jsonify({
                 'status': 'error',
-                'message': 'Tin nhắn không được để trống'
+                'message': 'Message is not empty'
             }), 400
             
         response = chatbot_service.get_response(user_message)
@@ -32,7 +32,7 @@ def chat():
 
 @chatbot_bp.route('/train', methods=['POST'])
 def train():
-    """API endpoint để training dữ liệu mới"""
+    """API endpoint to train new data"""
     try:
         data = request.get_json()
         documents = data.get('documents', [])
@@ -40,7 +40,7 @@ def train():
         if not documents:
             return jsonify({
                 'status': 'error',
-                'message': 'Không có dữ liệu training'
+                'message': 'No data to train'
             }), 400
             
         success = chatbot_service.train_knowledge(documents)
@@ -48,12 +48,12 @@ def train():
         if success:
             return jsonify({
                 'status': 'success',
-                'message': 'Training thành công'
+                'message': 'Training successful'
             })
         else:
             return jsonify({
                 'status': 'error',
-                'message': 'Có lỗi xảy ra khi training'
+                'message': 'An error occurred during training'
             }), 500
             
     except Exception as e:

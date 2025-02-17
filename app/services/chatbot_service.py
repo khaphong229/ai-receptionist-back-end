@@ -1,101 +1,122 @@
 from typing import List, Dict
-import openai
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Pinecone
-from langchain.chat_models import ChatOpenAI
+import os
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
-import pinecone
 from ..config import Config
 
 class ChatbotService:
     def __init__(self):
-        """Khởi tạo ChatbotService với các thành phần cần thiết"""
-        # Khởi tạo OpenAI
-        openai.api_key = Config.OPENAI_API_KEY
-        
-        # Khởi tạo Pinecone
-        pinecone.init(
-            api_key=Config.PINECONE_API_KEY,
-            environment=Config.PINECONE_ENVIRONMENT
+        """Initialize ChatbotService with required components"""
+        # Initialize OpenAI
+        self.llm = ChatOpenAI(
+            api_key=Config.OPENAI_API_KEY,
+            model_name=Config.OPENAI_MODEL,
+            temperature=0.7
         )
         
-        # Khởi tạo embedding model
-        self.embeddings = OpenAIEmbeddings()
-        
-        # Khởi tạo vector store
-        self.vectorstore = Pinecone.from_existing_index(
-            index_name=Config.PINECONE_INDEX,
-            embedding=self.embeddings
+        # Use HuggingFace embeddings
+        self.embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
         )
         
-        # Khởi tạo chat model
-        self.llm = ChatOpenAI(temperature=0.7)
+        # Create vector store directory if not exists
+        os.makedirs(Config.VECTOR_STORE_PATH, exist_ok=True)
         
-        # Khởi tạo memory
+        # Initialize or load vector store
+        try:
+            self.vectorstore = FAISS.load_local(
+                folder_path=Config.VECTOR_STORE_PATH,
+                embeddings=self.embeddings,
+                allow_dangerous_deserialization=True
+            )
+        except Exception as e:
+            print(f"Cannot load vector store, creating new one: {str(e)}")
+            # Initialize new vector store with data from knowledge dir
+            texts = self._load_knowledge_texts()
+            self.vectorstore = FAISS.from_texts(
+                texts if texts else ["Welcome to our restaurant"],
+                self.embeddings
+            )
+            # Save vector store
+            self.vectorstore.save_local(Config.VECTOR_STORE_PATH)
+        
+        # Initialize conversation chain
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
         
-        # Khởi tạo conversation chain
-        self.qa = ConversationalRetrievalChain.from_llm(
+        self.chain = ConversationalRetrievalChain.from_llm(
             llm=self.llm,
             retriever=self.vectorstore.as_retriever(),
             memory=self.memory,
             verbose=True
         )
 
+    def _load_knowledge_texts(self) -> List[str]:
+        """Load texts from knowledge directory"""
+        texts = []
+        knowledge_dir = Config.KNOWLEDGE_DIR
+        if os.path.exists(knowledge_dir):
+            for filename in os.listdir(knowledge_dir):
+                if filename.endswith('.txt'):
+                    with open(os.path.join(knowledge_dir, filename), 'r', encoding='utf-8') as f:
+                        texts.append(f.read())
+        return texts
+
     def get_response(self, user_message: str) -> str:
         """
-        Xử lý tin nhắn của người dùng và trả về câu trả lời
+        Process user message and return response
         
         Args:
-            user_message: Tin nhắn của người dùng
+            user_message: Message from user
             
         Returns:
-            str: Câu trả lời của chatbot
+            str: Chatbot response
         """
         try:
-            # Thêm system prompt để định hướng chatbot
-            system_prompt = """Bạn là trợ lý AI của nhà hàng. Nhiệm vụ của bạn là:
-            1. Trả lời các câu hỏi về menu, món ăn
-            2. Hỗ trợ đặt bàn
-            3. Cung cấp thông tin về lịch hoạt động
-            4. Tư vấn về các combo, khuyến mãi
-            5. Giải đáp các thắc mắc khác về nhà hàng
+            # Add system prompt
+            system_prompt = """You are an AI assistant for the restaurant. Your tasks are:
+            1. Answer questions about the menu and dishes
+            2. Help with reservations
+            3. Provide information about operating hours
+            4. Advise about promotions and special offers
+            5. Answer other questions about the restaurant
             
-            Hãy trả lời một cách thân thiện, chuyên nghiệp và chính xác."""
+            Please be friendly, professional and accurate."""
             
-            # Tạo prompt đầy đủ
-            full_prompt = f"{system_prompt}\n\nUser: {user_message}"
-            
-            # Lấy câu trả lời từ conversation chain
-            response = self.qa({"question": full_prompt})
+            # Get response using conversation chain
+            response = self.chain({
+                "question": user_message,
+                "system_prompt": system_prompt
+            })
             
             return response['answer']
             
         except Exception as e:
-            return f"Xin lỗi, có lỗi xảy ra: {str(e)}"
+            return f"Sorry, an error occurred: {str(e)}"
 
     def train_knowledge(self, documents: List[Dict[str, str]]):
         """
-        Cập nhật knowledge base với dữ liệu mới
+        Update knowledge base with new data
         
         Args:
-            documents: Danh sách các document cần thêm vào knowledge base
-            Format: [{"text": "nội dung", "metadata": {...}}]
+            documents: List of documents to add to knowledge base
+            Format: [{"text": "content", "metadata": {...}}]
         """
         try:
-            # Tạo embeddings và lưu vào Pinecone
             texts = [doc["text"] for doc in documents]
-            metadatas = [doc.get("metadata", {}) for doc in documents]
             
-            self.vectorstore.add_texts(
-                texts=texts,
-                metadatas=metadatas
-            )
+            # Add texts to vector store
+            self.vectorstore.add_texts(texts)
+            
+            # Save vector store
+            self.vectorstore.save_local(Config.VECTOR_STORE_PATH)
+            
             return True
         except Exception as e:
-            print(f"Lỗi khi training: {str(e)}")
+            print(f"Error during training: {str(e)}")
             return False
