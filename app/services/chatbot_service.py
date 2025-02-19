@@ -70,32 +70,32 @@ class ChatbotService:
     def get_response(self, user_message: str) -> str:
         """
         Process user message and return response
-        
+
         Args:
             user_message: Message from user
-            
+
         Returns:
             str: Chatbot response
         """
         try:
-            # Add system prompt
-            system_prompt = """You are an AI assistant for the restaurant. Your tasks are:
-            1. Answer questions about the menu and dishes
-            2. Help with reservations
-            3. Provide information about operating hours
-            4. Advise about promotions and special offers
-            5. Answer other questions about the restaurant
-            
-            Please be friendly, professional and accurate."""
-            
+            # Add system prompt inside conversation memory
+            self.memory.save_context(
+                {"input": "System Prompt"},
+                {"output": """You are an AI assistant for the restaurant. Your tasks are:
+                1. Answer questions about the menu and dishes
+                2. Help with reservations
+                3. Provide information about operating hours
+                4. Advise about promotions and special offers
+                5. Answer other questions about the restaurant
+
+                Please be friendly, professional, and accurate."""}
+            )
+
             # Get response using conversation chain
-            response = self.chain({
-                "question": user_message,
-                "system_prompt": system_prompt
-            })
-            
+            response = self.chain({"question": user_message})
+
             return response['answer']
-            
+
         except Exception as e:
             return f"Sorry, an error occurred: {str(e)}"
 
