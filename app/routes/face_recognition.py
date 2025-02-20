@@ -1,11 +1,15 @@
 from flask import Blueprint, request, jsonify
-from werkzeug.utils import secure_filename
+import base64
+import io
+from PIL import Image
+import numpy as np
 import os
 from bson import ObjectId
 from ..services.face_service import FaceService
 from ..database import mongo
 from ..models.customer import Customer
 from ..config import Config
+from datetime import datetime
 
 face_bp = Blueprint("face_recognition", __name__)
 face_service = FaceService()
@@ -14,6 +18,7 @@ face_service = FaceService()
 def recognize_face():
     """
     API endpoint để nhận diện khuôn mặt.
+    Hỗ trợ cả file upload và base64 image.
     
     Flow:
     1. Nhận ảnh từ request
@@ -25,20 +30,28 @@ def recognize_face():
     Returns:
         JSON response với thông tin khách hàng hoặc thông báo lỗi
     """
-    # Kiểm tra có file ảnh trong request không
-    if 'image' not in request.files:
-        return jsonify({
-            'status': 'error',
-            'message': 'No image uploaded'
-        }), 400
-
     try:
-        # Đọc và xử lý ảnh
-        image_file = request.files['image']
-        image_data = image_file.read()
+        # Kiểm tra loại dữ liệu gửi lên
+        if 'image' in request.files:
+            # Xử lý file upload
+            image_file = request.files['image']
+            image_data = image_file.read()
+        elif request.is_json and 'image' in request.json:
+            # Xử lý base64 image
+            base64_data = request.json['image']
+            image_data = base64.b64decode(base64_data)
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'No image provided. Send either a file or base64 image.'
+            }), 400
+
+        # Chuyển đổi image data thành numpy array
+        image = Image.open(io.BytesIO(image_data))
+        image_array = np.array(image)
         
         # Trích xuất face embedding
-        face_embedding = face_service.extract_face_embedding(image_data)
+        face_embedding = face_service.extract_face_embedding(image_array)
         if face_embedding is None:
             return jsonify({
                 'status': 'error',
@@ -50,8 +63,10 @@ def recognize_face():
 
         if matching_customer:
             # Xử lý khách hàng đã tồn tại
-            image_file.seek(0)  # Reset con trỏ file để đọc lại
-            face_image_path = face_service.save_face_image(image_file)
+            # Lưu ảnh
+            image_name = f"face_{str(matching_customer['_id'])}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.jpg"
+            face_image_path = os.path.join(Config.FACE_FOLDER, image_name)
+            image.save(face_image_path)
             
             # Cập nhật mảng ảnh khuôn mặt
             mongo.db.customers.update_one(
@@ -73,24 +88,27 @@ def recognize_face():
                 "matched"
             )
 
-            # Trả về thông tin khách hàng
             return jsonify({
                 'status': 'success',
                 'message': 'Customer found',
                 'customer': {
                     'id': str(matching_customer['_id']),
-                    'name': matching_customer.get('name'),
+                    'full_name': matching_customer.get('full_name'),
                     'email': matching_customer.get('email'),
                     'phone': matching_customer.get('phone'),
                     'face_images': matching_customer.get('face_images', []),
-                    'id_card': matching_customer.get('id_card'),
+                    'id_number': matching_customer.get('id_number'),
+                    'nationality': matching_customer.get('nationality'),
+                    'place_of_origin': matching_customer.get('place_of_origin'),
+                    'place_of_residence': matching_customer.get('place_of_residence'),
                 },
                 'appointments': appointments
             })
         else:
             # Xử lý khách hàng mới
-            image_file.seek(0)
-            face_image_path = face_service.save_face_image(image_file)
+            image_name = f"face_new_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.jpg"
+            face_image_path = os.path.join(Config.FACE_FOLDER, image_name)
+            image.save(face_image_path)
 
             # Tạo khách hàng mới
             new_customer = Customer(face_embedding=face_embedding)
@@ -104,7 +122,6 @@ def recognize_face():
                 "new"
             )
 
-            # Trả về thông tin khách hàng mới
             return jsonify({
                 'status': 'success',
                 'message': 'New customer created',
