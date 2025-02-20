@@ -7,6 +7,7 @@ from ..database import mongo
 from ..models.customer import Customer
 from ..config import Config
 from ..utils.file_handler import save_file
+import os
 
 class FaceService:
     def __init__(self):
@@ -15,33 +16,42 @@ class FaceService:
         """
         self.face_app = FaceAnalysis(name='buffalo_l')
         self.face_app.prepare(ctx_id=0, det_size=(640, 640))
-        self.similarity_threshold = 0.5  # Ngưỡng so sánh khuôn mặt
+        self.similarity_threshold = 0.85  # Ngưỡng so sánh khuôn mặt
 
     def extract_face_embedding(self, image):
         """
         Trích xuất face embedding từ ảnh
         
         Args:
-            image: Ảnh dưới dạng bytes hoặc numpy array
+            image: Ảnh dưới dạng bytes, numpy array hoặc PIL Image
             
         Returns:
             face_embedding: Vector đặc trưng khuôn mặt hoặc None nếu không tìm thấy
         """
-        # Chuyển đổi ảnh từ bytes sang numpy array
-        if isinstance(image, (bytes, bytearray)):
-            nparr = np.frombuffer(image, np.uint8)
-            img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        else:
-            img = image
+        try:
+            # Chuyển đổi ảnh sang numpy array nếu cần
+            if isinstance(image, (bytes, bytearray)):
+                nparr = np.frombuffer(image, np.uint8)
+                img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            elif isinstance(image, np.ndarray):
+                img = image
+            else:
+                # Nếu là PIL Image
+                img = np.array(image)
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-        # Phát hiện khuôn mặt
-        faces = self.face_app.get(img)
-        if not faces:
-            return None
+            # Phát hiện khuôn mặt
+            faces = self.face_app.get(img)
+            if not faces:
+                return None
+                
+            # Lấy khuôn mặt lớn nhất nếu có nhiều khuôn mặt
+            face = max(faces, key=lambda x: x.bbox[2] * x.bbox[3])
+            return face.embedding.tolist()
             
-        # Lấy khuôn mặt lớn nhất nếu có nhiều khuôn mặt
-        face = max(faces, key=lambda x: x.bbox[2] * x.bbox[3])
-        return face.embedding.tolist()
+        except Exception as e:
+            print(f"Error in extract_face_embedding: {str(e)}")
+            return None
 
     def compare_faces(self, embedding1, embedding2):
         """
@@ -55,7 +65,19 @@ class FaceService:
         """
         if embedding1 is None or embedding2 is None:
             return 0
-        return np.dot(embedding1, embedding2)
+            
+        # Chuyển về numpy array
+        embedding1 = np.array(embedding1)
+        embedding2 = np.array(embedding2)
+        
+        # Tính cosine similarity
+        norm1 = np.linalg.norm(embedding1)
+        norm2 = np.linalg.norm(embedding2)
+        if norm1 == 0 or norm2 == 0:
+            return 0
+            
+        cos_sim = np.dot(embedding1, embedding2) / (norm1 * norm2)
+        return cos_sim
 
     def find_matching_customer(self, face_embedding):
         """
