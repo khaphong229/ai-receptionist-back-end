@@ -1,5 +1,7 @@
 from typing import List, Dict
 import os
+import threading
+from ..services.text_to_speech_service import TextToSpeechService
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI
@@ -10,6 +12,7 @@ from ..config import Config
 class ChatbotService:
     def __init__(self):
         """Initialize ChatbotService with required components"""
+        self.tts_service = TextToSpeechService()
         # Initialize OpenAI
         self.llm = ChatOpenAI(
             api_key=Config.OPENAI_API_KEY,
@@ -67,37 +70,46 @@ class ChatbotService:
                         texts.append(f.read())
         return texts
 
-    def get_response(self, user_message: str) -> str:
+    def get_response(self, user_message: str, use_tts: bool = False):
         """
         Process user message and return response
-        
+
         Args:
             user_message: Message from user
-            
+
         Returns:
             str: Chatbot response
         """
         try:
-            # Add system prompt
-            system_prompt = """You are an AI assistant for the restaurant. Your tasks are:
-            1. Answer questions about the menu and dishes
-            2. Help with reservations
-            3. Provide information about operating hours
-            4. Advise about promotions and special offers
-            5. Answer other questions about the restaurant
-            
-            Please be friendly, professional and accurate."""
-            
-            # Get response using conversation chain
-            response = self.chain({
-                "question": user_message,
-                "system_prompt": system_prompt
-            })
-            
-            return response['answer']
-            
+            # Add system prompt inside conversation memory
+            self.memory.save_context(
+                {"input": "System Prompt"},
+                {"output": """You are an AI assistant for the restaurant. Your tasks are:
+                1. Answer questions about the menu and dishes
+                2. Help with reservations
+                3. Provide information about operating hours
+                4. Advise about promotions and special offers
+                5. Answer other questions about the restaurant
+
+                Please be friendly, professional, and accurate."""}
+            )
+            response_text = self.chain({"question": user_message})['answer']
+            audio_url = None
+
+            if use_tts:
+                # Run TTS in a background thread
+                def generate_tts():
+                    self.tts_service.text_to_speech(response_text)
+
+                threading.Thread(target=generate_tts).start()
+
+                # Return audio URL immediately without waiting
+                audio_url = "/speak"
+
+            return {"text": response_text, "audio_url": audio_url}
+
         except Exception as e:
-            return f"Sorry, an error occurred: {str(e)}"
+            return {"text": f"Sorry, an error occurred: {str(e)}", "audio_url": None}
 
     def train_knowledge(self, documents: List[Dict[str, str]]):
         """
