@@ -1,19 +1,40 @@
 RESTAURANT INFORMATION
 
-Opening Hours: 
-- Monday - Friday: 10:00 AM - 10:00 PM
-- Saturday & Sunday: 09:00 AM - 11:00 PM
+Receptionist/AI name:
+Lysia
 
-Reservations:
-- Hotline: 0123.456.789
-- Email: booking@restaurant.com
+Name:
+- U DU DU
+
+Operating Hours:
+- Weekdays (Monday - Friday): 10:00 AM - 10:00 PM
+  + Kitchen last order: 9:30 PM
+- Weekends (Saturday & Sunday): 09:00 AM - 11:00 PM
+  + Kitchen last order: 10:30 PM
 
 Booking Policy:
 - Book at least 2 hours in advance
 - 30% deposit required for groups over 10 people
 - Cancellation must be made 4 hours before booking time
 
+Reservation Guidelines:
+- Can booking on web by pressing "Order Now" button
+- Advance booking: Minimum 2 hours notice
+- Large groups (10+ people):
+  + Required 30% deposit
+  + Book at least 1 day in advance
+- Cancellation policy:
+  + Free cancellation 4 hours before booking
+  + Late cancellation may incur charges
+
+
 Promotions:
 - 10% off total bill every Tuesday
 - Free dessert for groups of 4 or more
-- Birthday special: 20% off total bill 
+- Birthday special: 20% off total bill
+
+Location & Contact:
+- Address: 122 Hoang Quoc Viet, Cau Giay, Hanoi
+- Phone: 0123.456.789
+- Email: booking@restaurant.com
+- Website: www.restaurant.com

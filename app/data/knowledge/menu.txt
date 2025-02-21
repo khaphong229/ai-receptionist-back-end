@@ -1,21 +1,54 @@
 RESTAURANT MENU
 
 1. APPETIZERS
-- Shrimp & Pork Spring Rolls: 55,000 VND
-- Seafood Spring Rolls: 65,000 VND
-- Mixed Salad: 45,000 VND
-
+- Shrimp & Pork Spring Rolls (Chả giò tôm thịt)
++ Price: 55,000 VND
++ Description: Fresh spring rolls with shrimp, pork, and vegetables, served with peanut dipping sauce.
++ Serving size: 4 rolls per portion
+- Seafood Spring Rolls (Chả giò hải sản)
++ Price: 65,000 VND
++ Description: Crispy deep-fried spring rolls stuffed with shrimp, squid, and crab meat, served with sweet chili sauce.
++ Serving size: 6 rolls per portion
+- Mixed Salad (Gỏi trộn thập cẩm)
++ Price: 45,000 VND
++ Description: A refreshing salad with mixed greens, fresh herbs, peanuts, and a tangy lime dressing.
++ Serving size: Serves 1-2 people
 2. MAIN COURSES
-- Seafood Fried Rice: 89,000 VND
-- Special Beef Pho: 75,000 VND
-- Hanoi Bun Cha: 85,000 VND
-
+- Seafood Fried Rice (Cơm chiên hải sản)
++ Price: 89,000 VND
++ Description: Fragrant fried rice with shrimp, squid, and vegetables, topped with a fried egg.
++ Serving size: Serves 1 person
+- Special Beef Pho (Phở bò đặc biệt)
++ Price: 75,000 VND
++ Description: Traditional Vietnamese noodle soup with tender beef slices, fresh herbs, and a rich beef broth.
++ Serving size: 1 bowl
+- Hanoi Bun Cha (Bún chả Hà Nội)
++ Price: 85,000 VND
++ Description: Grilled pork patties and pork belly served with vermicelli noodles, fresh herbs, and a tangy dipping sauce.
++ Serving size: Serves 1 person
 3. DESSERTS
-- Thai Sweet Soup: 35,000 VND
-- Caramel Flan: 25,000 VND
-- Seasonal Fruits: 45,000 VND
-
++ Thai Sweet Soup (Chè Thái)
++ Price: 35,000 VND
++ Description: A sweet and creamy dessert with jackfruit, lychee, coconut milk, and jelly.
++ Serving size: 1 bowl
+- Caramel Flan (Bánh flan)
++ Price: 25,000 VND
++ Description: Smooth and creamy caramel custard topped with a layer of caramel sauce.
++ Serving size: 1 piece
+- Seasonal Fruits (Trái cây theo mùa)
++ Price: 45,000 VND
++ Description: A fresh selection of seasonal tropical fruits.
++ Serving size: Serves 1-2 people
 4. BEVERAGES
-- Fresh Fruit Juice: 35,000 VND
-- Smoothies: 45,000 VND
-- Coffee: 29,000 VND 
+- Fresh Fruit Juice (Nước ép trái cây tươi)
++ Price: 35,000 VND
++ Description: Freshly squeezed fruit juice (orange, watermelon, pineapple, or passion fruit).
++ Serving size: 1 glass (350ml)
+- Smoothies (Sinh tố trái cây)
++ Price: 45,000 VND
++ Description: Blended fruit smoothies made with fresh fruits and yogurt.
++ Serving size: 1 glass (400ml)
+- Coffee (Cà phê Việt Nam)
++ Price: 29,000 VND
++ Description: Traditional Vietnamese coffee, served hot or iced, with or without condensed milk.
++ Serving size: 1 cup
