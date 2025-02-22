@@ -65,13 +65,13 @@ def recognize_face():
         if not face_embeddings:
             return jsonify({
                 'status': 'error',
-                'message': 'No faces detected in images'
+                'message': 'No faces detected in images or face quality too low'
             }), 400
 
-        # Tìm khách hàng khớp
+        # Tìm khách hàng khớp với độ chính xác cao
         match_result = face_service.find_matching_customer(face_embeddings)
 
-        if match_result:
+        if match_result and match_result['confidence'] > 0.7:  # Thêm ngưỡng tin cậy
             customer = match_result['customer']
             confidence = match_result['confidence']
             
@@ -83,7 +83,7 @@ def recognize_face():
                 Image.fromarray(image).save(face_image_path)
                 saved_images.append(face_image_path)
 
-            # Cập nhật embeddings
+            # Cập nhật embeddings để cải thiện độ chính xác cho lần sau
             face_service.update_customer_embeddings(customer['_id'], face_embeddings)
             
             # Cập nhật ảnh
@@ -101,11 +101,17 @@ def recognize_face():
                     'full_name': customer.get('full_name'),
                     'email': customer.get('email'),
                     'phone': customer.get('phone'),
-                    'face_images': customer.get('face_images', [])
+                    'face_images': customer.get('face_images', []),
+                    'id_number': customer.get('id_number'),
+                    'date_of_birth': customer.get('date_of_birth'),
+                    'gender': customer.get('gender'),
+                    'nationality': customer.get('nationality'),
+                    'place_of_origin': customer.get('place_of_origin'),
+                    'place_of_residence': customer.get('place_of_residence'),
                 }
             })
         else:
-            # Tạo khách hàng mới với nhiều ảnh
+            # Tạo khách hàng mới nếu không tìm thấy match đủ tin cậy
             saved_images = []
             for idx, image in enumerate(images):
                 image_name = f"face_new_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{idx}.jpg"
