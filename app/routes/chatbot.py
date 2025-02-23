@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, send_from_directory
 import os
 from ..services.chatbot_service import ChatbotService
+from flask import send_file
 
 chatbot_bp = Blueprint('chatbot', __name__)
 chatbot_service = ChatbotService()
@@ -27,17 +28,44 @@ def chat():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
+
+
 @chatbot_bp.route('/speak', methods=['GET'])
 def speak():
-    """Serve the generated speech file from static/audio/"""
-    audio_folder = os.path.join(os.getcwd(), "static/audio")  # Absolute path
-    filename = "response.mp3"
+    try:
+        # Lấy đường dẫn tuyệt đối đến thư mục gốc của project
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        audio_path = os.path.join(base_dir, 'static', 'audio', 'response.mp3')
+        
+        print(f"Base directory: {base_dir}")
+        print(f"Looking for audio file at: {audio_path}")
+        
+        if not os.path.exists(audio_path):
+            print(f"Audio file not found at {audio_path}")
+            return 'Audio file not found', 404
+            
+        file_size = os.path.getsize(audio_path)
+        print(f"Audio file size: {file_size} bytes")
+        
+        if file_size == 0:
+            print("Audio file is empty")
+            return 'Audio file is empty', 404
 
-    # Ensure the file exists before serving
-    if not os.path.exists(os.path.join(audio_folder, filename)):
-        return jsonify({'status': 'error', 'message': 'Audio file not found'}), 404
-
-    return send_from_directory(audio_folder, filename, mimetype="audio/mpeg")
+        try:
+            return send_file(
+                audio_path,
+                mimetype='audio/mpeg',
+                as_attachment=False,
+                download_name='response.mp3'
+            )
+        except Exception as send_error:
+            print(f"Error sending file: {send_error}")
+            print(f"Current working directory: {os.getcwd()}")
+            raise send_error
+            
+    except Exception as e:
+        print(f"Error in /speak route: {str(e)}")
+        return str(e), 500
 
 @chatbot_bp.route('/train', methods=['POST'])
 def train():
