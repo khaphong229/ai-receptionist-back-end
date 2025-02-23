@@ -8,6 +8,8 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from ..config import Config
+from flask import send_file
+import os
 
 class ChatbotService:
     def __init__(self):
@@ -70,16 +72,48 @@ class ChatbotService:
                         texts.append(f.read())
         return texts
 
+    # def get_response(self, user_message: str, use_tts: bool = False):
+    #     """
+    #     Process user message and return response
+
+    #     Args:
+    #         user_message: Message from user
+
+    #     Returns:
+    #         str: Chatbot response
+    #     """
+    #     try:
+    #         # Add system prompt inside conversation memory
+    #         self.memory.save_context(
+    #             {"input": "System Prompt"},
+    #             {"output": """You are an AI assistant for the restaurant. Your tasks are:
+    #             1. Answer questions about the menu and dishes
+    #             2. Help with reservations
+    #             3. Provide information about operating hours
+    #             4. Advise about promotions and special offers
+    #             5. Answer other questions about the restaurant
+
+    #             Please be friendly, professional, and accurate."""}
+    #         )
+    #         response_text = self.chain({"question": user_message})['answer']
+    #         audio_url = None
+
+    #         if use_tts:
+    #             # Run TTS in a background thread
+    #             def generate_tts():
+    #                 self.tts_service.text_to_speech(response_text)
+
+    #             threading.Thread(target=generate_tts).start()
+
+    #             # Return audio URL immediately without waiting
+    #             audio_url = "/speak"
+
+    #         return {"text": response_text, "audio_url": audio_url}
+
+    #     except Exception as e:
+    #         return {"text": f"Sorry, an error occurred: {str(e)}", "audio_url": None}
+    
     def get_response(self, user_message: str, use_tts: bool = False):
-        """
-        Process user message and return response
-
-        Args:
-            user_message: Message from user
-
-        Returns:
-            str: Chatbot response
-        """
         try:
             # Add system prompt inside conversation memory
             self.memory.save_context(
@@ -97,14 +131,14 @@ class ChatbotService:
             audio_url = None
 
             if use_tts:
-                # Run TTS in a background thread
-                def generate_tts():
+                # Thực hiện TTS đồng bộ, không dùng thread
+                try:
                     self.tts_service.text_to_speech(response_text)
-
-                threading.Thread(target=generate_tts).start()
-
-                # Return audio URL immediately without waiting
-                audio_url = "/speak"
+                    audio_url = "/speak"
+                except Exception as tts_error:
+                    print(f"TTS error: {tts_error}")
+                    # Vẫn trả về response text ngay cả khi TTS thất bại
+                    audio_url = None
 
             return {"text": response_text, "audio_url": audio_url}
 

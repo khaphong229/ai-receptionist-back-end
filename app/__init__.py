@@ -8,7 +8,10 @@ from .routes.chatbot import chatbot_bp
 from .routes.ocr import ocr_bp
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__,
+        static_folder='../static',  # Đường dẫn tương đối đến thư mục static
+        static_url_path='/static'   # URL prefix cho static files
+    )
     app.config.from_object(Config)
 
     # Cấu hình CORS cho tất cả origins
