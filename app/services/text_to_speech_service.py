@@ -17,3 +17,4 @@ class TextToSpeechService:
         except Exception as e:
             print(f"Error generating speech: {str(e)}")
             return None
+    
