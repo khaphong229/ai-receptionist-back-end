@@ -1,11 +1,11 @@
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import request, Blueprint, request, jsonify, send_from_directory
 import os
+from werkzeug.utils import secure_filename
+from ..services.speech_to_text_service import SpeechToTextService
 from ..services.chatbot_service import ChatbotService
-
 chatbot_bp = Blueprint('chatbot', __name__)
 chatbot_service = ChatbotService()
-
-
+speech_to_text_service = SpeechToTextService()
 @chatbot_bp.route('/chat', methods=['POST'])
 def chat():
     """API endpoint to process chat messages with optional TTS"""
@@ -70,3 +70,20 @@ def train():
             'status': 'error',
             'message': str(e)
         }), 500
+@chatbot_bp.route('/speech-to-text', methods=['POST'])
+def speech_to_text():
+    """API endpoint to convert speech to text"""
+    try:
+        if 'audio' not in request.files:
+            return jsonify({'status': 'error', 'message': 'No audio file provided'}), 400
+
+        audio_file = request.files['audio']
+        filename = secure_filename(audio_file.filename)
+        audio_path = os.path.join('/tmp', filename)
+        audio_file.save(audio_path)
+
+        transcript = speech_to_text_service.transcribe_audio(audio_path)
+        return jsonify({'status': 'success', 'transcript': transcript})
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
