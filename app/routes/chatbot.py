@@ -79,7 +79,9 @@ def speech_to_text():
 
         audio_file = request.files['audio']
         filename = secure_filename(audio_file.filename)
-        audio_path = os.path.join('/tmp', filename)
+        audio_folder = os.path.join(os.getcwd(), "static/audio")  # Absolute path to the audio folder
+        os.makedirs(audio_folder, exist_ok=True)  # Ensure the folder exists
+        audio_path = os.path.join(audio_folder, filename)
         audio_file.save(audio_path)
 
         transcript = speech_to_text_service.transcribe_audio(audio_path)
