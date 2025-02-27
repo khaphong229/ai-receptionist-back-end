@@ -30,3 +30,9 @@ class Config:
 
     STATIC_FOLDER = 'static'
     STATIC_URL_PATH = '/static'
+
+    TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+    TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+
+    # Cấu hình cho QR code
+    QR_CODE_PATH = os.getenv('QR_CODE_PATH', 'qr_codes')

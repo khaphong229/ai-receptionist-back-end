@@ -29,11 +29,10 @@ def create_appointment():
         # Validate date format
         try:
             datetime.strptime(data["appointment_date"], "%Y-%m-%d")
-            datetime.strptime(data["appointment_time"], "%H:%M")
         except ValueError:
             return jsonify({
                 "status": "error",
-                "message": "Invalid date/time format. Use YYYY-MM-DD for date and HH:MM for time"
+                "message": "Invalid date format. Use YYYY-MM-DD for date"
             }), 400
 
         # Validate table number
@@ -124,3 +123,20 @@ def update_appointment():
 @appointment_bp.route("/delete", methods=["DELETE"])
 def delete_appointment():
     pass
+
+@appointment_bp.route("/customer/<customer_id>/appointments", methods=["GET"])
+def get_customer_appointments(customer_id):
+    """API lấy danh sách lịch hẹn của customer"""
+    try:
+        appointments = appointment_service.get_appointments_by_customer_id(customer_id)
+        
+        return jsonify({
+            "status": "success",
+            "data": appointments
+        })
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
