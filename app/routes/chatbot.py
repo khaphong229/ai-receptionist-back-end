@@ -12,19 +12,30 @@ def chat():
     try:
         data = request.get_json()
         user_message = data.get('message')
-        use_tts = data.get('tts', False)  # Check if TTS is requested
+        use_tts = data.get('tts', False)
+        language = data.get('language', 'vi')  # Default to Vietnamese
 
         if not user_message:
-            return jsonify({'status': 'error', 'message': 'Message cannot be empty'}), 400
+            return jsonify({
+                'status': 'error',
+                'message': 'Message cannot be empty'
+            }), 400
+
+        # Get response from chatbot
         response = chatbot_service.get_response(user_message, use_tts)
+
         return jsonify({
             'status': 'success',
             'message': response["text"],
-            'audio_url': response["audio_url"], # If TTS is enabled, returns "/speak"
+            'audio_url': response["audio_url"],
         })
 
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+        print(f"Error in chat endpoint: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': f'Đã có lỗi xảy ra: {str(e)}'
+        }), 500
 
 
 @chatbot_bp.route('/speak', methods=['GET'])

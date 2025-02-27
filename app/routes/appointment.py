@@ -2,11 +2,14 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from app import mongo
 from app.services.appointment_service import AppointmentService
+from bson import ObjectId
+
 appointment_bp = Blueprint("appointment", __name__)
 appointment_service = AppointmentService()
 
 @appointment_bp.route("/create", methods=["POST"])
 def create_appointment():
+    """API tạo lịch hẹn mới"""
     try:
         data = request.get_json()
         if not data:
@@ -15,36 +18,39 @@ def create_appointment():
                 "message": "No data provided"
             }), 400
         
-        customer_id = data.get("customer_id")
-        if not customer_id:
-            return jsonify({
-                "status": "error",
-                "message": "Customer ID is required"
-            }), 400
-        
-        appointment_data = {
-            "customer_id": customer_id,
-            "appointment_date": data.get("appointment_date"),
-            "appointment_time": data.get("appointment_time"),
-            "appointment_status": data.get("appointment_status"),
-            "appointment_table": data.get("appointment_table"),
-            "appointment_note": data.get("appointment_note"),
-        }
+        required_fields = ["customer_id", "appointment_date", "appointment_time", "table_number"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    "status": "error",
+                    "message": f"{field} is required"
+                }), 400
 
-        if appointment_data.appointment_time < datetime.now():
+        # Validate date format
+        try:
+            datetime.strptime(data["appointment_date"], "%Y-%m-%d")
+            datetime.strptime(data["appointment_time"], "%H:%M")
+        except ValueError:
             return jsonify({
                 "status": "error",
-                "message": "Appointment time cannot be in the past"
+                "message": "Invalid date/time format. Use YYYY-MM-DD for date and HH:MM for time"
             }), 400
-        
-        appointment_service.create_appointment(appointment_data)
+
+        # Validate table number
+        if not 1 <= int(data["table_number"]) <= 10:
+            return jsonify({
+                "status": "error",
+                "message": "Invalid table number. Must be between 1 and 10"
+            }), 400
+
+        # Create appointment
+        result = appointment_service.create_appointment(data)
 
         return jsonify({
             "status": "success",
             "message": "Appointment created successfully",
-            "appointment_id": str(appointment_data.inserted_id)
+            "data": result
         }), 201
-
 
     except Exception as e:
         return jsonify({
@@ -52,11 +58,64 @@ def create_appointment():
             "message": str(e)
         }), 500
 
+@appointment_bp.route("/verify", methods=["POST", "GET"])
+def verify_appointment():
+    """API xác thực lịch hẹn khi checkin"""
+    try:
+        # Xử lý cả GET và POST request
+        if request.method == "GET":
+            appointment_id = request.args.get("appointment_id")
+        else:
+            data = request.get_json()
+            appointment_id = data.get("appointment_id") if data else None
+        
+        if not appointment_id:
+            return jsonify({
+                "status": "error",
+                "message": "Appointment ID is required"
+            }), 400
 
-@appointment_bp.route("/get", methods=["GET"])
-def get_appointment():
-    pass
+        success, message = appointment_service.verify_appointment(appointment_id)
+        
+        if success:
+            return jsonify({
+                "status": "success",
+                "message": message
+            })
+        else:
+            return jsonify({
+                "status": "error",
+                "message": message
+            }), 400
 
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+@appointment_bp.route("/get/<appointment_id>", methods=["GET"])
+def get_appointment(appointment_id):
+    """API lấy thông tin lịch hẹn"""
+    try:
+        appointment = appointment_service.get_appointment(appointment_id)
+        
+        if appointment:
+            return jsonify({
+                "status": "success",
+                "data": appointment
+            })
+        else:
+            return jsonify({
+                "status": "error",
+                "message": "Appointment not found"
+            }), 404
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 @appointment_bp.route("/update", methods=["PUT"])
 def update_appointment():

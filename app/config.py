@@ -13,7 +13,7 @@ class Config:
 
     # Thay đổi cấu hình Chatbot
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "your-openai-key")
-    OPENAI_MODEL = "gpt-3.5-turbo"  # Model rẻ nhất, phù hợp nhất
+    OPENAI_MODEL = "gpt-4o-mini-2024-07-18"  # Model rẻ nhất, phù hợp nhất
     
     # Cấu hình cho Local LLM (GPT4All)
     GPT4ALL_MODEL = "orca-mini-3b-gguf2-q4_0.gguf"  # Smaller, faster model
@@ -25,3 +25,8 @@ class Config:
 
     # Thêm cấu hình cho OCR
     OCR_LANG = 'vi'  # Ngôn ngữ OCR
+
+    TOGETHER_API_KEY = os.getenv('TOGETHER_API_KEY')
+
+    STATIC_FOLDER = 'static'
+    STATIC_URL_PATH = '/static'

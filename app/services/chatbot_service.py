@@ -9,17 +9,19 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from ..config import Config
 from flask import send_file
-import os
+import requests
 
 class ChatbotService:
     def __init__(self):
         """Initialize ChatbotService with required components"""
         self.tts_service = TextToSpeechService()
-        # Initialize OpenAI
+        
+        # Khởi tạo OpenAI với model gpt-4o-mini
         self.llm = ChatOpenAI(
+            model=Config.OPENAI_MODEL,
             api_key=Config.OPENAI_API_KEY,
-            model_name=Config.OPENAI_MODEL,
-            temperature=0.7
+            temperature=0.7,
+            max_tokens=2000
         )
         
         # Use HuggingFace embeddings
@@ -39,26 +41,27 @@ class ChatbotService:
             )
         except Exception as e:
             print(f"Cannot load vector store, creating new one: {str(e)}")
-            # Initialize new vector store with data from knowledge dir
             texts = self._load_knowledge_texts()
             self.vectorstore = FAISS.from_texts(
                 texts if texts else ["Welcome to our restaurant"],
                 self.embeddings
             )
-            # Save vector store
             self.vectorstore.save_local(Config.VECTOR_STORE_PATH)
         
-        # Initialize conversation chain
+        # Initialize conversation memory
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
         
+        # Initialize conversation chain
         self.chain = ConversationalRetrievalChain.from_llm(
             llm=self.llm,
             retriever=self.vectorstore.as_retriever(),
             memory=self.memory,
-            verbose=True
+            get_chat_history=lambda h: h,
+            verbose=True,
+            chain_type="stuff"  # Sử dụng stuff chain type
         )
 
     def _load_knowledge_texts(self) -> List[str]:
@@ -72,78 +75,58 @@ class ChatbotService:
                         texts.append(f.read())
         return texts
 
-    # def get_response(self, user_message: str, use_tts: bool = False):
-    #     """
-    #     Process user message and return response
-
-    #     Args:
-    #         user_message: Message from user
-
-    #     Returns:
-    #         str: Chatbot response
-    #     """
-    #     try:
-    #         # Add system prompt inside conversation memory
-    #         self.memory.save_context(
-    #             {"input": "System Prompt"},
-    #             {"output": """You are an AI assistant for the restaurant. Your tasks are:
-    #             1. Answer questions about the menu and dishes
-    #             2. Help with reservations
-    #             3. Provide information about operating hours
-    #             4. Advise about promotions and special offers
-    #             5. Answer other questions about the restaurant
-
-    #             Please be friendly, professional, and accurate."""}
-    #         )
-    #         response_text = self.chain({"question": user_message})['answer']
-    #         audio_url = None
-
-    #         if use_tts:
-    #             # Run TTS in a background thread
-    #             def generate_tts():
-    #                 self.tts_service.text_to_speech(response_text)
-
-    #             threading.Thread(target=generate_tts).start()
-
-    #             # Return audio URL immediately without waiting
-    #             audio_url = "/speak"
-
-    #         return {"text": response_text, "audio_url": audio_url}
-
-    #     except Exception as e:
-    #         return {"text": f"Sorry, an error occurred: {str(e)}", "audio_url": None}
-    
     def get_response(self, user_message: str, use_tts: bool = False):
         try:
-            # Add system prompt inside conversation memory
+            # Add system prompt
+            system_prompt = """You are Lysia, an AI assistant for U DU DU restaurant. Your tasks are:
+            1. Answer questions about our menu and dishes accurately
+            2. Help with reservations following our booking policy
+            3. Provide correct information about operating hours
+            4. Advise about current promotions and special offers
+            5. Answer other questions about the restaurant
+            
+            Important guidelines:
+            - Always be friendly and professional
+            - Provide specific details from our menu and policies
+            - If information is not in your knowledge base, say so politely
+            - For reservations, remind customers about our booking policies
+            - Speak in the same language as the customer's question
+            
+            Restaurant details:
+            - Name: U DU DU
+            - Location: 122 Hoang Quoc Viet, Cau Giay, Hanoi
+            - Contact: 0123.456.789
+            """
+            
+            # Add system prompt to memory
             self.memory.save_context(
                 {"input": "System Prompt"},
-                {"output": """You are an AI assistant for the restaurant. Your tasks are:
-                1. Answer questions about the menu and dishes
-                2. Help with reservations
-                3. Provide information about operating hours
-                4. Advise about promotions and special offers
-                5. Answer other questions about the restaurant
-
-                Please be friendly, professional, and accurate."""}
+                {"output": system_prompt}
             )
-            response_text = self.chain({"question": user_message})['answer']
-            audio_url = None
 
-            if use_tts:
-                # Thực hiện TTS đồng bộ, không dùng thread
+            # Get response from chain
+            response = self.chain({"question": user_message})
+            response_text = response.get('answer', response.get('response', ''))
+            
+            audio_url = None
+            if use_tts and response_text:
                 try:
                     self.tts_service.text_to_speech(response_text)
                     audio_url = "/speak"
                 except Exception as tts_error:
                     print(f"TTS error: {tts_error}")
-                    # Vẫn trả về response text ngay cả khi TTS thất bại
-                    audio_url = None
 
-            return {"text": response_text, "audio_url": audio_url}
+            return {
+                "text": response_text,
+                "audio_url": audio_url
+            }
 
         except Exception as e:
-            return {"text": f"Sorry, an error occurred: {str(e)}", "audio_url": None}
+            print(f"Error in get_response: {str(e)}")
+            return {
+                "text": f"Xin lỗi, đã có lỗi xảy ra: {str(e)}",
+                "audio_url": None
+            }
 
     def train_knowledge(self, documents: List[Dict[str, str]]):
         """
