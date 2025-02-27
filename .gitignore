@@ -12,6 +12,9 @@ uploads/
 #others
 .cursor/
 
+#json file
+app/onyx-gear-451908-s6-7645771f81ce.json
+
 # C extensions
 *.so
 
