@@ -1,0 +1,158 @@
+JAPANESE FOOD
+
+- Sushi
++ Price: 1000yen
++ Description:A classic Japanese dish made with vinegared rice and fresh seafood.
++ Serving size: 10kan 
+- Sashimi 
++ Price: 300yen
++ Description:Fresh raw fish or shellfish, thinly sliced and served with soy sauce.
++ Serving size:Usually served as 5-10 slices per portion, about 80-150g in total.
+- Tempura
++ Price: 300yen
++ Description:Lightly battered and deep-fried seafood or vegetables, crispy and delicious.
++ Serving size: A serving usually includes 5-7 pieces, with shrimp, fish, and vegetables, totaling about 150-250g.
+- Soba
++ Price: 600yen
++ Description:Thin buckwheat noodles, enjoyed either hot in broth or cold with dipping sauce.
++ Serving size:Roughly 200g per cup
+- Udon
++ Price: 600yen
++ Description:Thick and chewy wheat noodles, served in a flavorful broth.
++ Serving size:Roughly 200g per cup
+- Miso Soup
++ Price: 100yen
++ Description:A traditional soup made with miso paste and dashi stock, often with tofu and seaweed.
++ Serving size:One cup for one person
+-Onigiri
++ Price: 180yen
++ Description:A simple rice ball with a filling, wrapped in seaweed for easy eating.
++ Serving size:1 per person
+- Sukiyaki
++ Price:18000yen
++ Description:A hot pot dish with thinly sliced beef and vegetables in a sweet soy sauce broth.
++ Serving size:For groups, a large pot of sukiyaki is usually shared, and you can order extra ingredients if needed.
+- Shabu-shabu
++ Price:3000yen
++ Description:A Japanese hot pot where thinly sliced meat and vegetables are swished in a boiling broth.
++ Serving size:Shabu-shabu is usually served as a set meal for one person or as a shared hot pot for a group.
+- Okonomiyaki
++ Price:800yen
++ Description:A savory pancake with cabbage and various toppings, cooked on a griddle.
++ Serving size:A savory pancake, usually 250-350g per piece, about the size of a dinner plate. Often cut into 4-6 slices for sharing.
+- Chikuzen-ni
++ Price:300yen
++ Description:Chikuzen-ni is a simmered dish from Fukuoka, made with chicken and root vegetables in a soy-based broth. It has a rich and savory flavor.
++ Serving size:A simmered chicken and vegetable dish, typically served as a small bowl with about 150-200g of ingredients per serving.
+- Takoyaki
++ Price:500yen
++ Description:Takoyaki are ball-shaped snacks made from a batter filled with octopus, green onions, and tempura bits, cooked in a special iron mold and topped with sauce and bonito flakes.
++ Serving size:Usually served in portions of 6 to 10 pieces per plate.
+- Oden
++ Price:300yen
++ Description:Oden is a Japanese hot pot dish with ingredients like fish cakes, daikon radish, tofu, and boiled eggs, simmered in a light soy-based broth.
++ Serving size:Typically 3 to 5 ingredients per serving, customizable.
+- Motsunabe
++ Price:1200yen
++ Description:Motsunabe is a hot pot dish made with beef or pork offal, cabbage, garlic chives, and tofu, cooked in a flavorful soy or miso broth.
++ Serving size: A hot pot for 2 or more people, with about 200-300g of meat per person.
+- Tonkotsu Ramen
++ Price: 900yen
++ Description:Tonkotsu Ramen is a rich and creamy noodle soup made from a pork bone broth, topped with chashu (roast pork) and green onions.
++ Serving size:A bowl contains about 120-150g of noodles with soup and toppings.
+- Hiyajiru
++ Price: 500yen
++ Description:Hiyajiru is a cold miso soup with tofu, cucumbers, and sesame, poured over rice, mainly enjoyed in Miyazaki during summer.
++ Serving size:Served with a bowl of rice and about 200ml of cold soup.
+-Yakitori
++ Price: 500yen
++ Description:Yakitori is grilled skewered chicken, seasoned with either a sweet soy sauce-based tare or simple salt.
++ Serving size:Ordered by the skewer, usually 2-5 skewers per serving.
+- Katsudon
++ Price: 500yen
++ Description:Katsudon is a rice bowl topped with a breaded and deep-fried pork cutlet, simmered with eggs and soy-based sauce.
++ Serving size: A bowl with one 150-200g pork cutlet over rice.
+- Gyudon
++ Price: 600yen
++ Description:Gyudon is a beef rice bowl with thinly sliced beef and onions simmered in a sweet soy sauce.
++ Serving size:A bowl with about 100-150g of beef over rice.
+- Natto
++ Price: 100yen
++ Description:Natto is fermented soybeans known for their strong smell, sticky texture, and high nutritional value.
++ Serving size: Usually sold in 40-50g packs, often served with rice.
+- Tofu
++ Price: 100yen
++ Description:Tofu is a versatile soy product, soft or firm, used in various Japanese dishes like miso soup and hot pot.
++ Serving size: Common serving sizes are 150-300g per dish, depending on the dish.
+- Tonkatsu
++ Price: 1000yen
++ Description:Tonkatsu is a deep-fried breaded pork cutlet, often served with shredded cabbage and tonkatsu sauce.
++ Serving size:One 150-200g breaded pork cutlet per serving.
+- Yakisoba
++ Price: 400yen
++ Description:Yakisoba is stir-fried noodles with pork, vegetables, and a sweet-savory sauce, commonly eaten at festivals.
++ Serving size: One plate contains about 200-250g of noodles with vegetables and meat.
+- Mentaiko
++ Price: 1000yen
++ Description:Mentaiko is spicy cod roe, often eaten with rice or as a filling for onigiri.
++ Serving size:Usually served in portions of 30-50g per meal.
+- Nikujaga
++ Price: 300yen
++ Description:Nikujaga is a home-style stew made with beef, potatoes, and carrots, simmered in a sweet soy sauce broth.
++ Serving size:A bowl contains about 100-150g of meat and 200g of potatoes.
+- Unagi no Kabayaki
++ Price: 1500yen
++ Description:Unagi no Kabayaki is grilled eel coated with a sweet soy-based sauce, served over rice.
++ Serving size:Typically one fillet (100-150g) per serving.
+- Chawanmushi
++ Price: 200yen
++ Description:Chawanmushi is a smooth steamed egg custard with shrimp, chicken, and mushrooms.
++ Serving size:A small cup, about 150-200ml per serving.
+- Champon
++ Price: 1000yen
++ Description:Champon is a noodle soup from Nagasaki with seafood, vegetables, and pork in a rich broth.
++ Serving size: A bowl contains about 150-200g of noodles with seafood and vegetables.
+- Basashi
++ Price: 800yen
++ Description:Basashi is raw horse meat sashimi, usually served with soy sauce and garlic.
++ Serving size:Usually served as 5-10 thin slices, about 50-100g per portion.
+- Matcha
++ Price: 500yen
++ Description:Matcha is finely ground green tea powder, used in tea ceremonies and desserts.
++ Serving size:One serving uses 1-2g of matcha powder, mixed with water.
+- Dorayaki
++ Price: 100yen
++ Description:Dorayaki is a sweet pancake sandwich filled with red bean paste.
++ Serving size:One piece is about 80-150g, depending on the size.
+- Kiritanpo
++ Price: 300yen
++ Description:Kiritanpo is mashed rice formed into cylindrical shapes, grilled, and often served in a hot pot with chicken and vegetables.
++ Serving size:Usually 2-3 skewers per serving.
+- Dago-jiru
++ Price: 200yen
++ Description:Dago-jiru is a miso-based soup with dumpling-like wheat flour dough, root vegetables, and pork, mainly eaten in Kyushu.
++ Serving size:One bowl contains about 200-300ml of soup with dumplings.
+- Okinawa Soba
++ Price: 300yen
++ Description:Okinawa Soba is a noodle dish unique to Okinawa, made with wheat-based noodles in a pork and bonito broth.
++ Serving size:A bowl contains about 150-200g of noodles with broth.
+- Zenzai
++ Price: 100yen
++ Description:Zenzai is a sweet red bean soup with mochi, often enjoyed as a warm dessert in winter.
++ Serving size:One bowl contains about 200ml of sweet red bean soup with mochi.
+- Dango
++ Price: 100yen
++ Description:Dango are chewy rice flour dumplings, often skewered and coated with sweet soy sauce or red bean paste.
++ Serving size:
+- Umegae Mochi
++ Price: 150yen
++ Description:Umegae Mochi is a grilled rice cake filled with sweet red bean paste, a specialty of Dazaifu in Fukuoka.
++ Serving size: One piece is about 80-100g, filled with red bean paste.
+- Ochazuke
++ Price:500yen
++ Description:Ochazuke is a simple and comforting Japanese dish where hot tea or dashi broth is poured over rice, often topped with ingredients like salmon, seaweed, or pickles.
++ Serving size:A rice dish with tea or broth, typically a small bowl (150-200g of rice) with 200-300ml of liquid.
+- Taiyaki 
++ Price:200yen
++ Description:Taiyaki is a traditional Japanese fish-shaped cake, typically filled with sweet red bean paste. The batter is similar to pancake or waffle mix, and it's cooked in a mold to resemble a sea bream (tai). Variations include fillings like custard, chocolate, or cheese.
++ Serving size:A fish-shaped pastry filled with sweet red bean paste, usually one piece weighing about 100-150g.
